@@ -33,8 +33,12 @@ export default class Character extends Component {
   checkKeys = (shouldMoveStageLeft, shouldMoveStageRight) => {
     const { keys, store } = this.props;
     const { body } = this.body;
-
-    let characterState = this.state.characterState;
+    const increment = 5;
+    const states = [
+      [3, 2, 1],
+      [4, 2, 0],
+      [5, 6, 7],
+    ];
 
     let isUp = keys.isDown(keys.UP);
     let isDown = keys.isDown(keys.DOWN);
@@ -42,26 +46,21 @@ export default class Character extends Component {
     let isRight = keys.isDown(keys.RIGHT) && shouldMoveStageRight;
 
     let [x, y] = [0, 0];
+    let characterState = 1;
 
-    const increment = 5;
     if (isUp) {
-      y += increment;
-    } else if (isDown) {
       y -= increment;
+    } else if (isDown) {
+      y += increment;
     }
     if (isRight) {
       x += increment;
     } else if (isLeft) {
       x -= increment;
     }
+    characterState = states[1 + (y/5)][1 + (x/5)];
 
     this.move(body, x, y);
-
-    if (characterState == 8) {
-      characterState = 0;
-    } else {
-      characterState++;
-    }
 
     this.setState({
       characterState,
@@ -134,9 +133,9 @@ export default class Character extends Component {
             repeat={this.state.repeat}
             onPlayStateChanged={this.handlePlayStateChanged}
             src="/playersprite.png"
-            scale={this.context.scale * 2}
+            scale={(this.context.scale||1) * 2}
             state={this.state.characterState}
-            steps={[0, 1, 2, 3, 4, 5]}
+            steps={[0, 0, 0, 0, 0, 0, 0, 0]}
           />
         </Body>
       </div>
